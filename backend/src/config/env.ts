@@ -31,6 +31,10 @@ const envSchema = z.object({
   
   FRONTEND_URL: z.string().url(),
   
+  MAIL_SERVER: z.string().default('smtp.gmail.com'),
+  MAIL_USER: z.string().optional(),
+  MAIL_PASSWORD: z.string().optional(),
+  
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
