@@ -6,7 +6,7 @@ import { logger } from '../config/logger';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, guardianName, guardianEmail, address, phone } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ where: { email } });
@@ -20,13 +20,17 @@ export const register = async (req: Request, res: Response) => {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    // Create user with all fields
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role: role || UserRole.STUDENT,
       suspended: false,
+      guardianName: guardianName || null,
+      guardianEmail: guardianEmail || null,
+      address: address || null,
+      phone: phone || null,
     });
 
     // Generate tokens
@@ -58,11 +62,11 @@ export const register = async (req: Request, res: Response) => {
         refreshToken,
       },
     });
-  } catch (error) {
-    logger.error({ error }, 'Registration error');
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack }, 'Registration error');
     res.status(500).json({
       success: false,
-      error: 'Registration failed',
+      error: error.message || 'Registration failed',
     });
   }
 };
