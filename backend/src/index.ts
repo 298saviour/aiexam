@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { env } from './config/env';
 import { logger } from './config/logger';
-import { connectDatabase } from './models';
+import { connectDatabase, sequelize } from './models';
 import { connectRedis } from './config/redis';
 import { apiLimiter } from './middleware/rateLimiter';
 import { sanitizeData, sanitizeInput, preventParameterPollution } from './middleware/sanitize';
@@ -98,6 +98,9 @@ const startServer = async () => {
     // Try to connect to database (non-blocking)
     try {
       await connectDatabase();
+      // Sync database models (alter: true will add new columns without dropping tables)
+      await sequelize.sync({ alter: true });
+      logger.info('Database models synced successfully');
     } catch (dbError) {
       logger.warn({ error: dbError }, 'Database connection failed - server will start without DB');
     }
