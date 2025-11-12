@@ -1,0 +1,8 @@
+# Railway Monorepo Configuration
+# This tells Railway how to handle multiple services
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+# This is the root config - Railway will ask which service to deploy
