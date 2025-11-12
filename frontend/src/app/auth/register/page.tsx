@@ -58,14 +58,18 @@ export default function RegisterPage() {
       setIsLoading(true);
       setError('');
 
-      // For now, only send fields the backend expects
-      // TODO: Update backend User model to store guardian info, phone, and address
       const payload: any = {
         name: data.name,
         email: data.email,
         password: data.password,
         role: data.role,
       };
+
+      // Add optional fields if provided
+      if (data.guardianName) payload.guardianName = data.guardianName;
+      if (data.guardianEmail) payload.guardianEmail = data.guardianEmail;
+      if (data.address) payload.address = data.address;
+      if (data.phone) payload.phone = data.phone;
 
       const response = await apiClient.post('/auth/register', payload);
 
@@ -147,7 +151,6 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Parent/Guardian Full Name"
                   error={errors.guardianName?.message}
-                  helperText="Will be saved in future update"
                   {...register('guardianName')}
                 />
                 <Input
@@ -163,7 +166,6 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Your home address"
                   error={errors.address?.message}
-                  helperText="Will be saved in future update"
                   {...register('address')}
                 />
               </>
@@ -177,7 +179,6 @@ export default function RegisterPage() {
                   type="tel"
                   placeholder="+234 800 000 0000"
                   error={errors.phone?.message}
-                  helperText="Will be saved in future update"
                   {...register('phone')}
                 />
                 <Input
@@ -185,7 +186,6 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Your address"
                   error={errors.address?.message}
-                  helperText="Will be saved in future update"
                   {...register('address')}
                 />
               </>

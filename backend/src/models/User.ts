@@ -16,6 +16,12 @@ export interface UserAttributes {
   profilePhoto?: string;
   classId?: number;
   suspended: boolean;
+  // Student fields
+  guardianName?: string;
+  guardianEmail?: string;
+  address?: string;
+  // Teacher fields
+  phone?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -31,6 +37,10 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   declare profilePhoto?: string;
   declare classId?: number;
   declare suspended: boolean;
+  declare guardianName?: string;
+  declare guardianEmail?: string;
+  declare address?: string;
+  declare phone?: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -77,6 +87,25 @@ User.init(
     suspended: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    guardianName: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    guardianEmail: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    phone: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
     },
   },
   {
