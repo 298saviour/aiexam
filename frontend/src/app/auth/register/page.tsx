@@ -21,9 +21,31 @@ const registerSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
   confirmPassword: z.string(),
   role: z.enum(['student', 'teacher']),
+  // Student fields
+  guardianName: z.string().optional(),
+  guardianEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  address: z.string().optional(),
+  // Teacher fields
+  phone: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
+}).refine((data) => {
+  if (data.role === 'student') {
+    return data.guardianName && data.guardianName.length >= 2;
+  }
+  return true;
+}, {
+  message: "Guardian name is required for students",
+  path: ['guardianName'],
+}).refine((data) => {
+  if (data.role === 'teacher') {
+    return data.phone && data.phone.length >= 10;
+  }
+  return true;
+}, {
+  message: "Phone number is required for teachers",
+  path: ['phone'],
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -36,6 +58,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -44,17 +67,30 @@ export default function RegisterPage() {
     },
   });
 
+  const selectedRole = watch('role');
+
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setIsLoading(true);
       setError('');
 
-      const response = await apiClient.post('/auth/register', {
+      const payload: any = {
         name: data.name,
         email: data.email,
         password: data.password,
         role: data.role,
-      });
+      };
+
+      if (data.role === 'student') {
+        payload.guardianName = data.guardianName;
+        payload.guardianEmail = data.guardianEmail;
+        payload.address = data.address;
+      } else if (data.role === 'teacher') {
+        payload.phone = data.phone;
+        payload.address = data.address;
+      }
+
+      const response = await apiClient.post('/auth/register', payload);
 
       if (response.data.success) {
         router.push('/auth/login?registered=true');
@@ -125,6 +161,54 @@ export default function RegisterPage() {
               </div>
               {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>}
             </div>
+
+            {/* Student-specific fields */}
+            {selectedRole === 'student' && (
+              <>
+                <Input
+                  label="Guardian Name"
+                  type="text"
+                  placeholder="Parent/Guardian Full Name"
+                  error={errors.guardianName?.message}
+                  {...register('guardianName')}
+                />
+                <Input
+                  label="Guardian Email"
+                  type="email"
+                  placeholder="guardian@example.com"
+                  error={errors.guardianEmail?.message}
+                  helperText="Optional: For important notifications"
+                  {...register('guardianEmail')}
+                />
+                <Input
+                  label="Address"
+                  type="text"
+                  placeholder="Your home address"
+                  error={errors.address?.message}
+                  {...register('address')}
+                />
+              </>
+            )}
+
+            {/* Teacher-specific fields */}
+            {selectedRole === 'teacher' && (
+              <>
+                <Input
+                  label="Phone Number"
+                  type="tel"
+                  placeholder="+234 800 000 0000"
+                  error={errors.phone?.message}
+                  {...register('phone')}
+                />
+                <Input
+                  label="Address"
+                  type="text"
+                  placeholder="Your address"
+                  error={errors.address?.message}
+                  {...register('address')}
+                />
+              </>
+            )}
 
             <Input
               label="Password"

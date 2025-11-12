@@ -200,7 +200,7 @@ function HeroGeometric({
                         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                     >
                         <a
-                            href="/dev-login"
+                            href="/auth/register"
                             className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
                         >
                             Get Started

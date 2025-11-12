@@ -28,7 +28,7 @@ function Navbar() {
               Privacy Policy
             </a>
             <a
-              href="/dev-login"
+              href="/auth/login"
               className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300"
             >
               Login
@@ -69,7 +69,7 @@ function Navbar() {
               Privacy Policy
             </a>
             <a
-              href="/dev-login"
+              href="/auth/login"
               className="block px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium text-center"
               onClick={() => setIsOpen(false)}
             >
