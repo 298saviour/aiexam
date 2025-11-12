@@ -30,22 +30,6 @@ const registerSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
-}).refine((data) => {
-  if (data.role === 'student') {
-    return data.guardianName && data.guardianName.length >= 2;
-  }
-  return true;
-}, {
-  message: "Guardian name is required for students",
-  path: ['guardianName'],
-}).refine((data) => {
-  if (data.role === 'teacher') {
-    return data.phone && data.phone.length >= 10;
-  }
-  return true;
-}, {
-  message: "Phone number is required for teachers",
-  path: ['phone'],
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -74,21 +58,14 @@ export default function RegisterPage() {
       setIsLoading(true);
       setError('');
 
+      // For now, only send fields the backend expects
+      // TODO: Update backend User model to store guardian info, phone, and address
       const payload: any = {
         name: data.name,
         email: data.email,
         password: data.password,
         role: data.role,
       };
-
-      if (data.role === 'student') {
-        payload.guardianName = data.guardianName;
-        payload.guardianEmail = data.guardianEmail;
-        payload.address = data.address;
-      } else if (data.role === 'teacher') {
-        payload.phone = data.phone;
-        payload.address = data.address;
-      }
 
       const response = await apiClient.post('/auth/register', payload);
 
@@ -166,25 +143,27 @@ export default function RegisterPage() {
             {selectedRole === 'student' && (
               <>
                 <Input
-                  label="Guardian Name"
+                  label="Guardian Name (Optional)"
                   type="text"
                   placeholder="Parent/Guardian Full Name"
                   error={errors.guardianName?.message}
+                  helperText="Will be saved in future update"
                   {...register('guardianName')}
                 />
                 <Input
-                  label="Guardian Email"
+                  label="Guardian Email (Optional)"
                   type="email"
                   placeholder="guardian@example.com"
                   error={errors.guardianEmail?.message}
-                  helperText="Optional: For important notifications"
+                  helperText="For important notifications"
                   {...register('guardianEmail')}
                 />
                 <Input
-                  label="Address"
+                  label="Address (Optional)"
                   type="text"
                   placeholder="Your home address"
                   error={errors.address?.message}
+                  helperText="Will be saved in future update"
                   {...register('address')}
                 />
               </>
@@ -194,17 +173,19 @@ export default function RegisterPage() {
             {selectedRole === 'teacher' && (
               <>
                 <Input
-                  label="Phone Number"
+                  label="Phone Number (Optional)"
                   type="tel"
                   placeholder="+234 800 000 0000"
                   error={errors.phone?.message}
+                  helperText="Will be saved in future update"
                   {...register('phone')}
                 />
                 <Input
-                  label="Address"
+                  label="Address (Optional)"
                   type="text"
                   placeholder="Your address"
                   error={errors.address?.message}
+                  helperText="Will be saved in future update"
                   {...register('address')}
                 />
               </>
