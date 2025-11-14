@@ -55,6 +55,10 @@ docker-compose.override.yml
 
 # Railway
 .railway/
+backend/.env.railway
+backend/railway-variables.json
+backend/upload-vars.ps1
+test-registration.js
 
 # Package managers
 package-lock.json

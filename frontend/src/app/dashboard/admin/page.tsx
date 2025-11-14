@@ -7,24 +7,19 @@ import { Users, GraduationCap, FileText, Brain, Activity, AlertCircle } from 'lu
 
 export default function AdminDashboard() {
   const stats = {
-    totalTeachers: 12,
-    totalStudents: 245,
-    activeExams: 8,
-    aiJobsToday: 156,
+    totalTeachers: 0,
+    totalStudents: 0,
+    activeExams: 0,
+    aiJobsToday: 0,
   };
 
-  const recentAILogs = [
-    { id: 1, type: 'grading', student: 'John Doe', exam: 'Mathematics', status: 'completed', time: '2 min ago' },
-    { id: 2, type: 'training', course: 'Physics', status: 'in_progress', time: '5 min ago' },
-    { id: 3, type: 'grading', student: 'Jane Smith', exam: 'Chemistry', status: 'completed', time: '10 min ago' },
-    { id: 4, type: 'parsing', teacher: 'Mr. Johnson', status: 'failed', time: '15 min ago' },
-  ];
+  const recentAILogs: any[] = [];
 
   const systemHealth = [
-    { service: 'API Server', status: 'healthy', uptime: '99.9%' },
+    { service: 'API Server', status: 'healthy', uptime: '100%' },
     { service: 'Database', status: 'healthy', uptime: '100%' },
-    { service: 'Redis Cache', status: 'healthy', uptime: '99.8%' },
-    { service: 'AI Service', status: 'degraded', uptime: '95.2%' },
+    { service: 'Redis Cache', status: 'healthy', uptime: '100%' },
+    { service: 'AI Service', status: 'healthy', uptime: '100%' },
   ];
 
   return (
@@ -105,36 +100,44 @@ export default function AdminDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {recentAILogs.map((log) => (
-                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          log.type === 'grading' ? 'bg-blue-100 text-blue-700' :
-                          log.type === 'training' ? 'bg-purple-100 text-purple-700' :
-                          'bg-gray-100 text-gray-700'
-                        }`}>
-                          {log.type}
-                        </span>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          log.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          log.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
-                          {log.status}
-                        </span>
+              {recentAILogs.length === 0 ? (
+                <div className="text-center py-8">
+                  <Brain className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No AI activity yet</p>
+                  <p className="text-sm text-gray-400 mt-1">AI logs will appear here as the system processes tasks</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentAILogs.map((log) => (
+                    <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            log.type === 'grading' ? 'bg-blue-100 text-blue-700' :
+                            log.type === 'training' ? 'bg-purple-100 text-purple-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {log.type}
+                          </span>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            log.status === 'completed' ? 'bg-green-100 text-green-700' :
+                            log.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {log.status}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 mt-1">
+                          {log.student && `${log.student} - ${log.exam}`}
+                          {log.course && `Course: ${log.course}`}
+                          {log.teacher && `Teacher: ${log.teacher}`}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">{log.time}</p>
                       </div>
-                      <p className="text-sm text-gray-700 mt-1">
-                        {log.student && `${log.student} - ${log.exam}`}
-                        {log.course && `Course: ${log.course}`}
-                        {log.teacher && `Teacher: ${log.teacher}`}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">{log.time}</p>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 

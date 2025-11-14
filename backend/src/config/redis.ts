@@ -2,12 +2,17 @@ import { createClient } from 'redis';
 import { env } from './env';
 import { logger } from './logger';
 
-export const redisClient = createClient({
-  socket: {
-    host: env.REDIS_HOST,
-    port: parseInt(env.REDIS_PORT),
-  },
-});
+// Use REDIS_URL if available (Railway format), otherwise use host/port
+const redisConfig = process.env.REDIS_URL 
+  ? { url: process.env.REDIS_URL }
+  : {
+      socket: {
+        host: env.REDIS_HOST,
+        port: parseInt(env.REDIS_PORT) || 6379,
+      },
+    };
+
+export const redisClient = createClient(redisConfig);
 
 redisClient.on('error', (err) => {
   logger.error({ err }, 'Redis connection error');

@@ -11,23 +11,15 @@ export default function TeacherDashboard() {
   const router = useRouter();
   
   const stats = {
-    totalStudents: 45,
-    activeExams: 3,
-    pendingGrading: 12,
-    coursesManaged: 5,
+    totalStudents: 0,
+    activeExams: 0,
+    pendingGrading: 0,
+    coursesManaged: 0,
   };
 
-  const recentSubmissions = [
-    { id: 1, student: 'John Doe', exam: 'Mathematics Mid-Term', submitted: '2 hours ago', status: 'pending' },
-    { id: 2, student: 'Jane Smith', exam: 'Physics Quiz', submitted: '5 hours ago', status: 'graded' },
-    { id: 3, student: 'Mike Johnson', exam: 'Chemistry Test', submitted: '1 day ago', status: 'pending' },
-  ];
+  const recentSubmissions: any[] = [];
 
-  const aiTrainingStatus = [
-    { course: 'Mathematics', status: 'completed', progress: 100 },
-    { course: 'Physics', status: 'in_progress', progress: 65 },
-    { course: 'Chemistry', status: 'pending', progress: 0 },
-  ];
+  const aiTrainingStatus: any[] = [];
 
   return (
     <DashboardLayout sidebar={<TeacherSidebar />}>
@@ -104,24 +96,32 @@ export default function TeacherDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {recentSubmissions.map((submission) => (
-                  <div key={submission.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">{submission.student}</p>
-                      <p className="text-sm text-gray-500">{submission.exam}</p>
-                      <p className="text-xs text-gray-400 mt-1">{submission.submitted}</p>
+              {recentSubmissions.length === 0 ? (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No recent submissions</p>
+                  <p className="text-sm text-gray-400 mt-1">Student submissions will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentSubmissions.map((submission) => (
+                    <div key={submission.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">{submission.student}</p>
+                        <p className="text-sm text-gray-500">{submission.exam}</p>
+                        <p className="text-xs text-gray-400 mt-1">{submission.submitted}</p>
+                      </div>
+                      <div>
+                        {submission.status === 'graded' ? (
+                          <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">Graded</span>
+                        ) : (
+                          <Button size="sm" variant="outline">Grade Now</Button>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      {submission.status === 'graded' ? (
-                        <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">Graded</span>
-                      ) : (
-                        <Button size="sm" variant="outline">Grade Now</Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -130,25 +130,33 @@ export default function TeacherDashboard() {
               <CardTitle>AI Training Status</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {aiTrainingStatus.map((item, index) => (
-                  <div key={index}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">{item.course}</span>
-                      <span className="text-sm text-gray-500">{item.progress}%</span>
+              {aiTrainingStatus.length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No AI training in progress</p>
+                  <p className="text-sm text-gray-400 mt-1">Upload lesson notes to start AI training</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {aiTrainingStatus.map((item, index) => (
+                    <div key={index}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">{item.course}</span>
+                        <span className="text-sm text-gray-500">{item.progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${
+                            item.status === 'completed' ? 'bg-green-500' :
+                            item.status === 'in_progress' ? 'bg-blue-500' : 'bg-gray-300'
+                          }`}
+                          style={{ width: `${item.progress}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${
-                          item.status === 'completed' ? 'bg-green-500' :
-                          item.status === 'in_progress' ? 'bg-blue-500' : 'bg-gray-300'
-                        }`}
-                        style={{ width: `${item.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

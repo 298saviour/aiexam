@@ -9,28 +9,21 @@ import { TrendingUp, FileText, Award, Clock } from 'lucide-react';
 export default function StudentDashboard() {
   const router = useRouter();
   
-  // Mock data - will be replaced with API calls
+  // Empty state - data will be loaded from API
   const stats = {
-    overallAverage: 85.5,
-    currentClass: 'SS3 Science',
-    examsTaken: 12,
-    pendingExams: 3,
+    overallAverage: 0,
+    currentClass: 'Not Assigned',
+    examsTaken: 0,
+    pendingExams: 0,
   };
 
-  const recentExams = [
-    { id: 1, title: 'Mathematics Mid-Term', score: 88, date: '2024-11-01', status: 'graded' },
-    { id: 2, title: 'Physics Quiz', score: 92, date: '2024-10-28', status: 'graded' },
-    { id: 3, title: 'Chemistry Practical', score: 78, date: '2024-10-25', status: 'graded' },
-  ];
+  const recentExams: any[] = [];
 
-  const upcomingExams = [
-    { id: 4, title: 'Biology Final Exam', date: '2024-11-15', duration: 120 },
-    { id: 5, title: 'English Literature', date: '2024-11-18', duration: 90 },
-  ];
+  const upcomingExams: any[] = [];
 
   const aiRemarks = {
-    strengths: ['Strong analytical skills', 'Excellent problem-solving in Mathematics'],
-    weaknesses: ['Need improvement in Chemistry practicals', 'Time management in exams'],
+    strengths: [] as string[],
+    weaknesses: [] as string[],
   };
 
   return (
@@ -109,22 +102,30 @@ export default function StudentDashboard() {
               <CardTitle>Recent Exam Results</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentExams.map((exam) => (
-                  <div key={exam.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">{exam.title}</p>
-                      <p className="text-sm text-gray-500">{exam.date}</p>
+              {recentExams.length === 0 ? (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No exam results yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Your graded exams will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {recentExams.map((exam) => (
+                    <div key={exam.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">{exam.title}</p>
+                        <p className="text-sm text-gray-500">{exam.date}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-blue-600">{exam.score}%</p>
+                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                          Graded
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-blue-600">{exam.score}%</p>
-                      <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                        Graded
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -134,30 +135,42 @@ export default function StudentDashboard() {
               <CardTitle>AI Performance Insights</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-green-700 mb-2">✓ Strengths</h4>
-                  <ul className="space-y-2">
-                    {aiRemarks.strengths.map((strength, index) => (
-                      <li key={index} className="text-sm text-gray-700 flex items-start">
-                        <span className="text-green-500 mr-2">•</span>
-                        {strength}
-                      </li>
-                    ))}
-                  </ul>
+              {aiRemarks.strengths.length === 0 && aiRemarks.weaknesses.length === 0 ? (
+                <div className="text-center py-8">
+                  <Award className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No AI insights yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Complete exams to get personalized feedback</p>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-orange-700 mb-2">⚠ Areas for Improvement</h4>
-                  <ul className="space-y-2">
-                    {aiRemarks.weaknesses.map((weakness, index) => (
-                      <li key={index} className="text-sm text-gray-700 flex items-start">
-                        <span className="text-orange-500 mr-2">•</span>
-                        {weakness}
-                      </li>
-                    ))}
-                  </ul>
+              ) : (
+                <div className="space-y-4">
+                  {aiRemarks.strengths.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-green-700 mb-2">✓ Strengths</h4>
+                      <ul className="space-y-2">
+                        {aiRemarks.strengths.map((strength, index) => (
+                          <li key={index} className="text-sm text-gray-700 flex items-start">
+                            <span className="text-green-500 mr-2">•</span>
+                            {strength}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {aiRemarks.weaknesses.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-orange-700 mb-2">⚠ Areas for Improvement</h4>
+                      <ul className="space-y-2">
+                        {aiRemarks.weaknesses.map((weakness, index) => (
+                          <li key={index} className="text-sm text-gray-700 flex items-start">
+                            <span className="text-orange-500 mr-2">•</span>
+                            {weakness}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -168,25 +181,33 @@ export default function StudentDashboard() {
             <CardTitle>Upcoming Exams</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {upcomingExams.map((exam) => (
-                <div key={exam.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
-                  <div>
-                    <p className="font-semibold text-gray-900">{exam.title}</p>
-                    <p className="text-sm text-gray-500">Duration: {exam.duration} minutes</p>
+            {upcomingExams.length === 0 ? (
+              <div className="text-center py-8">
+                <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No upcoming exams</p>
+                <p className="text-sm text-gray-400 mt-1">Check back later for scheduled exams</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {upcomingExams.map((exam) => (
+                  <div key={exam.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                    <div>
+                      <p className="font-semibold text-gray-900">{exam.title}</p>
+                      <p className="text-sm text-gray-500">Duration: {exam.duration} minutes</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-gray-700">{exam.date}</p>
+                      <button 
+                        onClick={() => router.push(`/dashboard/student/exam/${exam.id}`)}
+                        className="mt-2 px-4 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+                      >
+                        Start Exam
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-gray-700">{exam.date}</p>
-                    <button 
-                      onClick={() => router.push(`/dashboard/student/exam/${exam.id}`)}
-                      className="mt-2 px-4 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
-                    >
-                      Start Exam
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
